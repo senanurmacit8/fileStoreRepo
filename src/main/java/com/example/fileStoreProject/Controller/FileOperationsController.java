@@ -32,7 +32,7 @@ public class FileOperationsController {
     @Autowired
     IFileOperationService fileOperationService;
 
-    @RequestMapping(value = "/addNewFile", method = RequestMethod.POST, produces = "application/json")
+    @RequestMapping(value = "/addNewFile", method = RequestMethod.POST)
     public void addNewFile(AddFileRequest fileAddRequest) {
 
         FileInfo fileInfo = new FileInfo();
@@ -40,7 +40,7 @@ public class FileOperationsController {
         fileInfo.setFileName(fileAddRequest.getFileName());
         fileInfo.setFileExtension(fileAddRequest.getFileExtension());
 
-        fileOperationService.addNewFile(fileInfo);
+        //fileOperationService.addNewFile(fileInfo);
 
         logger.info("new file added to database name as : " + fileInfo.getFileName());
     }

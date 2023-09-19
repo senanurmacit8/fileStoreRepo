@@ -1,6 +1,7 @@
-package com.example.fileStoreProject.Service.ServiceInpl;
+package com.example.fileStoreProject.Service.ServiceImpl;
 
 
+import com.example.fileStoreProject.Service.IFileOperationService;
 import com.example.fileStoreProject.entity.FileEntity;
 import com.example.fileStoreProject.model.FileInfo;
 import com.example.fileStoreProject.repository.FileRepository;
@@ -31,20 +32,20 @@ path, boyutu, ismi, uzantısını ilişkisel bir veritabanında tutmalıdır.
  Swagger dökümantasyonu
  */
 @Service
-public class FileOperationServiceImpl {
+public class FileOperationServiceImpl implements IFileOperationService {
 
 
     @Autowired
     FileRepository fileRepository;
 
-    private void addNewFile(FileInfo fileInfo){
+     public void addNewFile(FileInfo fileInfo){
 
         String fileName = fileInfo.getFileName();
         File file = new File(fileName);
 
     }
 
-    private List<FileEntity> listAllFiles(){
+     public List<FileEntity> listAllFiles(){
         return fileRepository.findAll();
     }
 

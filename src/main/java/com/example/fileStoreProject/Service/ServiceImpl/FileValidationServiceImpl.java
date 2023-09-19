@@ -1,4 +1,4 @@
-package com.example.fileStoreProject.Service.ServiceInpl;
+package com.example.fileStoreProject.Service.ServiceImpl;
 
 
 import com.example.fileStoreProject.Service.IFileValidationService;
