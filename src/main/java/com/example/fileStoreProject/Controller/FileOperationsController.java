@@ -6,9 +6,11 @@ import com.example.fileStoreProject.service.IFileOperationService;
 import com.example.fileStoreProject.entity.FileEntity;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -25,6 +27,7 @@ import java.util.List;
 @RestController
 @CrossOrigin(origins = "http://localhost:8081")
 @RequestMapping("/api")
+@ConfigurationProperties("storage")
 public class FileOperationsController {
 
     Logger logger = Logger.getLogger(FileOperationsController.class);
@@ -60,6 +63,21 @@ public class FileOperationsController {
     @GetMapping("/files/fileName")
     public ResponseEntity<List<FileEntity>> findByFileName(@PathVariable("file_name") String fileName) {
         return fileOperationService.findByFileName(fileName);
+    }
+
+    @GetMapping("/files/fileName")
+    public ResponseEntity<Byte[]> getFileByNameAsByteArray(@PathVariable("file_name") String fileName) {
+        return fileOperationService.(fileName);
+    }
+
+    @PostMapping("/uploadFile")
+    public String handleFileUpload(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
+
+        fileOperationService.storeFileWithContext(file);
+        redirectAttributes.addFlashAttribute("message",
+                "You successfully uploaded " + file.getOriginalFilename() + "!");
+
+        return "redirect:/uploadFile";
     }
 
 
