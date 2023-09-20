@@ -1,84 +1,64 @@
 package com.example.fileStoreProject.Controller;
 
 
+import com.example.fileStoreProject.model.FileAddResponse;
 import com.example.fileStoreProject.model.FileInfo;
 import com.example.fileStoreProject.service.IFileOperationService;
 import com.example.fileStoreProject.entity.FileEntity;
+import com.example.fileStoreProject.service.Impl.FileOperationBusinessServiceImpl;
+import com.example.fileStoreProject.service.Impl.FileStorageServiceImpl;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.List;
-
-
-/**
- * Dosya saklama ve listeleme işlemlerimizi yapabilmek için bir API oluşturulması
- * gerekmektedir.
- * <p>
- * Dosya içeriği bir rest endpoint aracılığı ile byte arrray olarak dönülmelidir.
- * <p>
- * Dosyalar rest endpoint üzerinden değiştirilip silinebilmelidir.
- */
+import java.io.IOException;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:8081")
-@RequestMapping("/api")
-@ConfigurationProperties("storage")
 public class FileOperationsController {
 
     Logger logger = Logger.getLogger(FileOperationsController.class);
 
-    @Autowired(required = false)
-    IFileOperationService fileOperationService;
+    @Autowired
+    FileOperationBusinessServiceImpl fileOperationBusinessService;
 
-    @PostMapping("/createFile")
-    public ResponseEntity<FileEntity> createFile(@RequestBody FileInfo fileInfo) {
+    @Autowired
+    FileStorageServiceImpl fileStorageService;
 
-        FileEntity fileEntity = new FileEntity();
-        fileEntity.setFile_name(fileInfo.getFileName());
-        fileEntity.setFile_extension(fileInfo.getFileExtension());
-
-        return fileOperationService.createFile(fileEntity);
+    @GetMapping("/listUploadedFiles")
+    public String listUploadedFiles(Model model) throws IOException {
+        fileOperationBusinessService.listUploadedFiles(model);
+        return "uploadForm";
     }
 
-    @GetMapping(value = "/listAllFiles")
-    public ResponseEntity<List<FileEntity>> listAllFiles() {
-        return fileOperationService.listAllFiles();
+    @GetMapping("/files/{filename:.+}")
+    @ResponseBody
+    public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
+        return fileOperationBusinessService.getFile(filename);
     }
 
-    @PutMapping("/files/{id}")
-    public ResponseEntity<FileEntity> updateFile(@PathVariable("id") long id, @RequestBody FileInfo fileInfo) {
-
-        FileEntity fileEntity = new FileEntity();
-        fileEntity.setFile_name(fileInfo.getFileName());
-        fileEntity.setFile_extension(fileInfo.getFileExtension());
-
-        return fileOperationService.updateFileById(id, fileEntity);
+    @GetMapping("/files/{filename:.+}")
+    @ResponseBody
+    public ResponseEntity<byte[]> serveFileAsByteArray(@PathVariable String filename) throws IOException {
+        return fileOperationBusinessService.getFileContentAsByteArray(filename);
     }
 
-    @GetMapping("/files/fileName")
-    public ResponseEntity<List<FileEntity>> findByFileName(@PathVariable("file_name") String fileName) {
-        return fileOperationService.findByFileName(fileName);
-    }
-
-    @GetMapping("/files/fileName")
-    public ResponseEntity<Byte[]> getFileByNameAsByteArray(@PathVariable("file_name") String fileName) {
-        return fileOperationService.(fileName);
-    }
 
     @PostMapping("/uploadFile")
     public String handleFileUpload(@RequestParam("file") MultipartFile file, RedirectAttributes redirectAttributes) {
+        String responseMessage = fileOperationBusinessService.handleFileUpload(file, redirectAttributes);
 
-        fileOperationService.storeFileWithContext(file);
-        redirectAttributes.addFlashAttribute("message",
-                "You successfully uploaded " + file.getOriginalFilename() + "!");
-
-        return "redirect:/uploadFile";
+        return responseMessage;
     }
 
+    @ResponseBody
+    public void deleteAllUploadedFiles() {
+        fileOperationBusinessService.deleteAll();
+    }
 
 }

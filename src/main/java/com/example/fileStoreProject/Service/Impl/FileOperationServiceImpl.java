@@ -10,10 +10,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.ui.Model;
+import org.springframework.web.servlet.mvc.method.annotation.MvcUriComponentsBuilder;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.io.IOException;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -41,7 +41,6 @@ import java.util.stream.Collectors;
 public class FileOperationServiceImpl implements IFileOperationService {
     Logger logger = Logger.getLogger(FileOperationsController.class);
 
-
     @Autowired
     FileRepository fileRepository;
 
@@ -64,25 +63,6 @@ public class FileOperationServiceImpl implements IFileOperationService {
 
     }
 
-    public ResponseEntity<List<FileEntity>> listAllFiles() {
-        logger.info("List all files started...");
-        List<FileEntity> files = new ArrayList<FileEntity>();
-        try {
-
-            fileRepository.findAll().forEach(files::add);
-
-            if (files.isEmpty()) {
-                return new ResponseEntity<List<FileEntity>>(HttpStatus.NO_CONTENT);
-            }
-
-            logger.info("files are " + files.stream().map(FileEntity::getFile_name).collect(Collectors.joining()));
-            return new ResponseEntity<>(files, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
-        } finally {
-            logger.info("List all files end...");
-        }
-    }
 
     public ResponseEntity<FileEntity> updateFileById(Long id, FileEntity fileEntity) {
         logger.info("Update file started...");
@@ -96,7 +76,6 @@ public class FileOperationServiceImpl implements IFileOperationService {
             newFileEntity.setFile_size(fileEntity.getFile_size());
             newFileEntity.setFile_path(fileEntity.getFile_path());
 
-
             logger.info("Update file end...");
 
             return new ResponseEntity<>(fileRepository.save(newFileEntity), HttpStatus.OK);
@@ -104,23 +83,6 @@ public class FileOperationServiceImpl implements IFileOperationService {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-    }
-
-    public ResponseEntity<List<FileEntity>> findByFileName(String fileName) {
-        logger.info("findByFileName started...");
-
-        try {
-            List<FileEntity> files = fileRepository.findByFileName(fileName);
-
-            if (files.isEmpty()) {
-                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-            }
-            return new ResponseEntity<>(files, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        } finally {
-            logger.info("findByFileName end...");
-        }
     }
 
 

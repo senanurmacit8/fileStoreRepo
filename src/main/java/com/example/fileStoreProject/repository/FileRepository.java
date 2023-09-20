@@ -9,7 +9,5 @@ import java.util.List;
 @Repository
 public interface FileRepository extends JpaRepository<FileEntity, Long> {
 
-     List<FileEntity> findByFileName(String fileName);
-
-     List<FileEntity>  findAll();
+     List<FileEntity> findAll();
 }
