@@ -22,13 +22,10 @@ import java.io.IOException;
 @RestController
 public class FileOperationsController {
 
-    Logger logger = Logger.getLogger(FileOperationsController.class);
 
     @Autowired
     FileOperationBusinessServiceImpl fileOperationBusinessService;
 
-    @Autowired
-    FileStorageServiceImpl fileStorageService;
 
     @GetMapping("/listUploadedFiles")
     public String listUploadedFiles(Model model) throws IOException {
@@ -36,13 +33,13 @@ public class FileOperationsController {
         return "uploadForm";
     }
 
-    @GetMapping("/files/{filename:.+}")
+    @GetMapping("/serveFile/{filename:.+}")
     @ResponseBody
     public ResponseEntity<Resource> serveFile(@PathVariable String filename) {
         return fileOperationBusinessService.getFile(filename);
     }
 
-    @GetMapping("/files/{filename:.+}")
+    @GetMapping("/serveFileAsByteArray/{filename:.+}")
     @ResponseBody
     public ResponseEntity<byte[]> serveFileAsByteArray(@PathVariable String filename) throws IOException {
         return fileOperationBusinessService.getFileContentAsByteArray(filename);
@@ -56,7 +53,7 @@ public class FileOperationsController {
         return responseMessage;
     }
 
-    @ResponseBody
+    @PostMapping("/deleteAllUploadedFiles")
     public void deleteAllUploadedFiles() {
         fileOperationBusinessService.deleteAll();
     }
