@@ -1,4 +1,4 @@
-package com.example.fileStoreProject.Service;
+package com.example.fileStoreProject.service;
 
 
 public interface IFileValidationService {

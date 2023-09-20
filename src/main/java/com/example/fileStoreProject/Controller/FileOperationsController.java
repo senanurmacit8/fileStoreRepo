@@ -1,18 +1,20 @@
 package com.example.fileStoreProject.Controller;
 
 
-import com.example.fileStoreProject.Service.IFileOperationService;
-import com.example.fileStoreProject.entity.FileEntity;
-import com.example.fileStoreProject.model.AddFileRequest;
 import com.example.fileStoreProject.model.FileInfo;
+import com.example.fileStoreProject.service.IFileOperationService;
+import com.example.fileStoreProject.entity.FileEntity;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import static java.lang.String.valueOf;
 
 
 /**
@@ -25,32 +27,28 @@ gerekmektedir.
  */
 
 @RestController
+@CrossOrigin(origins = "http://localhost:8081")
+@RequestMapping("/api")
 public class FileOperationsController {
 
     Logger logger = Logger.getLogger(FileOperationsController.class);
 
-    @Autowired
-    IFileOperationService fileOperationService;
+   @Autowired(required = false)
+   IFileOperationService fileOperationService;
 
-    @RequestMapping(value = "/addNewFile", method = RequestMethod.POST)
-    public void addNewFile(AddFileRequest fileAddRequest) {
+    @PostMapping("/createFile")
+    public ResponseEntity<FileEntity> createFile(@RequestBody FileInfo fileInfo) {
 
-        FileInfo fileInfo = new FileInfo();
+        FileEntity fileEntity = new FileEntity();
+        fileEntity.setFile_name(fileInfo.getFileName());
+        fileEntity.setFile_extension(fileInfo.getFileExtension());
 
-        fileInfo.setFileName(fileAddRequest.getFileName());
-        fileInfo.setFileExtension(fileAddRequest.getFileExtension());
-
-        //fileOperationService.addNewFile(fileInfo);
-
-        logger.info("new file added to database name as : " + fileInfo.getFileName());
+        return fileOperationService.createFile(fileEntity);
     }
 
-    @RequestMapping(value = "/listAllFiles", method = RequestMethod.GET, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<FileEntity> listAllFiles(){
-
-
+    @GetMapping(value = "/listAllFiles" )
+    public ResponseEntity<List<FileEntity>> listAllFiles(){
         return fileOperationService.listAllFiles();
-
     }
 
 }

@@ -1,7 +1,6 @@
-package com.example.fileStoreProject.Service.ServiceImpl;
+package com.example.fileStoreProject.service.Impl;
 
-
-import com.example.fileStoreProject.Service.IFileValidationService;
+import com.example.fileStoreProject.service.IFileValidationService;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
