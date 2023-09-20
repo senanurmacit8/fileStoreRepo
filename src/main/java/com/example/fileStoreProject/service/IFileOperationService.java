@@ -14,5 +14,8 @@ public interface IFileOperationService {
 
     ResponseEntity<List<FileEntity>> listAllFiles();
 
+     ResponseEntity<FileEntity> updateFileById(Long id,FileEntity fileEntity);
 
-}
+    ResponseEntity<List<FileEntity>> findByFileName(String fileName) ;
+
+    }
